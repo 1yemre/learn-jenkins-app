@@ -34,8 +34,10 @@ pipeline {
 
             steps {
                 sh '''
-                    #test -f build/index.html
-                    npm test
+                    # test-results dizinini oluşturuyoruz
+                    mkdir -p test-results
+                    chmod -R 777 test-results  # Yazma izinlerini açıyoruz
+                    npm test -- --testResultsProcessor="jest-junit" --outputFile="test-results/junit.xml"  # Testi çalıştır, sonuçları belirtilen dosyaya kaydet
                 '''
             }
         }
@@ -61,7 +63,7 @@ pipeline {
 
     post {
         always {
-            junit 'jest-results/junit.xml'
+            junit '**/test-results/junit.xml'  # Test raporunun doğru yolu
         }
     }
 }
