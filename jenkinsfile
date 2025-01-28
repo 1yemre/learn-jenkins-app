@@ -2,28 +2,6 @@ pipeline {
     agent any
 
     stages {
-        /*
-
-        stage('Build') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                    ls -la
-                    node --version
-                    npm --version
-                    npm ci
-                    npm run build
-                    ls -la
-                '''
-            }
-        }
-        */
-
         stage('Test') {
             agent {
                 docker {
@@ -31,11 +9,11 @@ pipeline {
                     reuseNode true
                 }
             }
-
             steps {
                 sh '''
-                    #test -f build/index.html
-                    npm test
+                    mkdir -p test-results  # Test sonuçları dizini oluşturuluyor
+                    chmod -R 777 test-results  # Yazma izinleri veriliyor
+                    npm test  # Testleri çalıştırma
                 '''
             }
         }
@@ -47,7 +25,6 @@ pipeline {
                     reuseNode true
                 }
             }
-
             steps {
                 sh '''
                     npm install serve
@@ -61,7 +38,7 @@ pipeline {
 
     post {
         always {
-             junit '**/jest-results/junit.xml'
+            junit '**/test-results/junit.xml'  # Test raporlarının doğru yolu
         }
     }
 }
