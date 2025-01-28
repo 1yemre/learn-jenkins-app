@@ -34,10 +34,8 @@ pipeline {
 
             steps {
                 sh '''
-                    # test-results dizinini oluşturuyoruz
-                    mkdir -p test-results
-                    chmod -R 777 test-results  // Yazma izinlerini açıyoruz
-                    npm test -- --testResultsProcessor="jest-junit" --outputFile="test-results/junit.xml"  // Testi çalıştır, sonuçları belirtilen dosyaya kaydet
+                    #test -f build/index.html
+                    npm test
                 '''
             }
         }
@@ -45,7 +43,7 @@ pipeline {
         stage('E2E') {
             agent {
                 docker {
-                    image 'mcr.microsoft.com/playwright:v1.50.0-noble' 
+                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
                     reuseNode true
                 }
             }
@@ -63,7 +61,7 @@ pipeline {
 
     post {
         always {
-            junit '**/test-results/junit.xml'  // Test raporunun doğru yolu
+            junit 'jest-results/junit.xml'
         }
     }
 }
